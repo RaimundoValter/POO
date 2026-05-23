@@ -10,15 +10,34 @@ class RecordRepository(AbstractRepository):
 
     def load_all(self):
         data = FileLoader.load_csv(self._file_path)
-        self._records = [
-            Record(int(row["id"]), row["name"], row["address"])
-            for row in data
-        ]
+        self._records = []
+        
+        for row in data:
+            try:
+                if not row.get("id"):
+                    raise ValueError("ID vazio")
+
+                record_id = int(row["id"])
+
+                if record_id <= 0:
+                    raise ValueError("ID negativo ou zero")
+
+                if not row.get("name", "").strip() or not row.get("address", "").strip():
+                    raise ValueError("Nome ou endereço vazio")
+
+                registro = Record(record_id, row["name"], row["address"])
+                self._records.append(registro)
+                
+            except ValueError:
+                print(f"Registro inválido ignorado: {row}")
+                
         return self._records
 
     def search(self, term: str):
-        term = term.lower()
+        termos_busca = term.lower().split()
+        
         return [
             r for r in self._records
-            if term in r.name.lower() or term in r.address.lower()
+            if all(t in f"{r.name} {r.address}".lower() for t in termos_busca)
         ]
+  
