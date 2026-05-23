@@ -10,15 +10,38 @@ class RecordRepository(AbstractRepository):
 
     def load_all(self):
         data = FileLoader.load_csv(self._file_path)
-        self._records = [
-            Record(int(row["id"]), row["name"], row["address"])
-            for row in data
-        ]
+        self._records = []
+        for row in data:
+            try:
+                record_id = int(row["id"])
+                if record_id <= 0:
+                    continue
+            except:
+                continue
+            name = row["name"].strip()
+            address = row["address"].strip()
+            if not name or not address:
+                continue
+            self._records.append(Record(record_id, name, address))
         return self._records
 
-    def search(self, term: str):
-        term = term.lower()
-        return [
-            r for r in self._records
-            if term in r.name.lower() or term in r.address.lower()
-        ]
+    def search(self, termo: str):
+        acentos = {'á': 'a', 'à': 'a', 'ã': 'a', 'â': 'a'}
+
+        def sem_acento(texto):
+            texto = texto.lower()
+            for acentuado, letra_simples in acentos.items():
+                texto = texto.replace(acentuado, letra_simples)
+            return texto
+
+        termos = sem_acento(termo).split()
+        results = []
+        for registro in self._records:
+            found = True
+            for t in termos:
+                if t not in sem_acento(registro.name) and t not in sem_acento(registro.address):
+                    found = False
+                    break
+            if found:
+                results.append(registro)
+        return results
