@@ -53,7 +53,7 @@ class TestRunner:
         try:
             self.service.get_all_records()
 
-            results = self.service.search("joao rua a")
+            results = self.service.search("joão rua a")
 
             if len(results) == 0:
                 print("FALHA: Nenhum resultado encontrado")
@@ -61,7 +61,7 @@ class TestRunner:
 
             for r in results:
                 text = (r.name + " " + r.address).lower()
-                if "joao" not in text or "rua" not in text or "a" not in text:
+                if "joão" not in text or "rua" not in text or "a" not in text:
                     print("FALHA: Resultado incorreto na busca")
                     return
 
