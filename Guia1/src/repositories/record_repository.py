@@ -1,6 +1,7 @@
 from src.repositories.abstract_repository import AbstractRepository
 from src.models.record import Record
 from src.utils.file_loader import FileLoader
+from unidecode import unidecode
 
 class RecordRepository(AbstractRepository):
 
@@ -10,15 +11,18 @@ class RecordRepository(AbstractRepository):
 
     def load_all(self):
         data = FileLoader.load_csv(self._file_path)
-        self._records = [
-            Record(int(row["id"]), row["name"], row["address"])
-            for row in data
-        ]
+        for row in data:
+            try:
+                id = int(row['id'])
+                if row['name'].strip() == '' or row['address'].strip() == '' or id < 0:
+                    raise ValueError()
+                else:
+                    self._records.append(Record(id, row['name'], row['address']))
+            except:
+                print(f"Registro inválido ignorado {row}")    
+
         return self._records
 
     def search(self, term: str):
-        term = term.lower()
-        return [
-            r for r in self._records
-            if term in r.name.lower() or term in r.address.lower()
-        ]
+        terms = unidecode(term).lower().split()
+        results = []
