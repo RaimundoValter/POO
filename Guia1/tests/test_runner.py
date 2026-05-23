@@ -10,7 +10,7 @@ class TestRunner:
         base_dir = os.path.dirname(os.path.dirname(__file__))
         self.test_file = os.path.join(base_dir, "data", "records_teste.csv")
         self.service = RecordService(self.test_file)
-        print(f"\n{calculate_file_hash(os.path.join(base_dir, "tests", "test_runner.py"))}")
+        print(f'\n{calculate_file_hash(os.path.join(base_dir, "tests", "test_runner.py"))}')
 
     def run(self):
         print("\n=== EXECUTANDO TESTES ===")
@@ -61,7 +61,7 @@ class TestRunner:
 
             for r in results:
                 text = (r.name + " " + r.address).lower()
-                if "joao" not in text or "rua" not in text or "a" not in text:
+                if "joão" not in text or "rua" not in text or "a" not in text:
                     print("FALHA: Resultado incorreto na busca")
                     return
 
