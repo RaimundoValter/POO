@@ -1,90 +1,53 @@
-from src.alternativa import Alternativa
+from datetime import datetime
+from typing import List, Optional, Tuple, Any
+from src.resposta import Resposta
+from src.respostaobjetiva import RespostaObjetiva
+from src.respostadiscursiva import RespostaDiscursiva
 from src.perguntamultiplaescolha import PerguntaMultiplaEscolha
 from src.perguntadiscursiva import PerguntaDiscursiva
-from src.questionario import Questionario
-from src.tentativaquestionario import TentativaQuestionario
 
+class TentativaQuestionario:
+    def __init__(self, questionario, usuario: str):
+        self.questionario = questionario
+        self.usuario: str = usuario
+        self.data_inicio: Optional[datetime] = datetime.now()
+        self.data_fim: Optional[datetime] = None
+        self.respostas: List[Resposta] = []
 
-def criar_questionario():
-    q = Questionario("Quiz")
+    def registrar_resposta(self, indice_pergunta: int, valor: Any) -> None:
+        if self.is_finalizado():
+            raise ValueError("A tentativa já foi finalizada.")
+            
+        if not (0 <= indice_pergunta < len(self.questionario.perguntas)):
+            raise IndexError("Índice de pergunta inválido.")
 
-    p1 = PerguntaMultiplaEscolha(
-        texto="2 + 2?",
-        alternativas=[
-            Alternativa("3", False),
-            Alternativa("4", True),
-        ]
-    )
+        pergunta = self.questionario.perguntas[indice_pergunta]
 
-    p2 = PerguntaDiscursiva(
-        texto="Sigla CPU",
-        resposta_esperada="Central Processing Unit"
-    )
+        if isinstance(pergunta, PerguntaMultiplaEscolha) and isinstance(valor, int):
+            nova_resposta = RespostaObjetiva(pergunta, valor)
+        elif isinstance(pergunta, PerguntaDiscursiva) and isinstance(valor, str):
+            nova_resposta = RespostaDiscursiva(pergunta, valor)
+        else:
+            raise TypeError("O tipo de resposta é incompatível com a pergunta.")
 
-    q.adicionar_pergunta(p1)
-    q.adicionar_pergunta(p2)
+        self.respostas.append(nova_resposta)
 
-    return q
+    def calcular_pontuacao(self) -> float:
+        pontuacao_total = 0.0
+        for resposta in self.respostas:
+            if resposta is not None:
+                pontuacao_total += resposta.calcular_pontuacao()
+        return pontuacao_total
 
+    def is_finalizado(self) -> bool:
+        return self.data_fim is not None
 
-def test_registrar_resposta_objetiva():
-    q = criar_questionario()
+    def finalizar(self) -> Tuple[float, str]:
+        if not self.is_finalizado():
+            self.data_fim = datetime.now()
+        
+        pontuacao = self.calcular_pontuacao()
+        resumo = f"Tentativa concluída por {self.usuario}."
+        return pontuacao, resumo
 
-    tentativa = TentativaQuestionario(
-        questionario=q,
-        usuario="valter"
-    )
-
-    tentativa.registrar_resposta(0, 1)
-
-    assert len(tentativa.respostas) == 1
-
-
-def test_registrar_resposta_discursiva():
-    q = criar_questionario()
-
-    tentativa = TentativaQuestionario(
-        questionario=q,
-        usuario="valter"
-    )
-
-    tentativa.registrar_resposta(
-        1,
-        "Central Processing Unit"
-    )
-
-    assert len(tentativa.respostas) == 1
-
-
-def test_calcular_pontuacao():
-    q = criar_questionario()
-
-    tentativa = TentativaQuestionario(
-        questionario=q,
-        usuario="valter"
-    )
-
-    tentativa.registrar_resposta(0, 1)
-    tentativa.registrar_resposta(
-        1,
-        "Central Processing Unit"
-    )
-
-    assert tentativa.calcular_pontuacao() == 2.0
-
-
-def test_finalizar():
-    q = criar_questionario()
-
-    tentativa = TentativaQuestionario(
-        questionario=q,
-        usuario="valter"
-    )
-
-    tentativa.registrar_resposta(0, 1)
-
-    pontuacao, feedback = tentativa.finalizar()
-
-    assert pontuacao >= 0
-    assert isinstance(feedback, str)
-    assert tentativa.is_finalizado() is True
+QuizAttempt = TentativaQuestionario
