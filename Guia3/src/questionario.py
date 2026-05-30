@@ -1,8 +1,9 @@
 ﻿from typing import List, Tuple, Dict
-from tentativaquestionario import TentativaQuestionario
+from .tentativaquestionario import TentativaQuestionario
+
 class Questionario:
     def __init__(self, titulo: str):
-        perguntas = []
+        self.perguntas = []
         self.__titulo = titulo
         
     def registrar_resposta(self, indice_pergunta, valor):
@@ -13,12 +14,6 @@ class Questionario:
 
     def criar_attempt(self, usuario):
         tentativa = TentativaQuestionario(self, usuario)
+        return tentativa
 
-
-    def finalizar():
-        pass
-    def calcular_pontuacao():
-        pass
-    def is_finalizado():
-        pass
 

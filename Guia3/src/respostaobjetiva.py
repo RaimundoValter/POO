@@ -1,9 +1,15 @@
 from typing import List, Tuple, Dict
-from resposta import Resposta
+from .resposta import Resposta
 class RespostaObjetiva(Resposta):
-    def __init__(self, pergunta, esta_correta, pontuacao_obtida, indice_escolhido, alternativa_selecionada):
-        self.__indice_escolhido = indice_escolhido
-        self.alternativa_selecionada = alternativa_selecionada
+    def __init__(self, pergunta, indice_escolhido, pontuacao_obtida=None):
+        self.indice_escolhido = indice_escolhido
+        esta_correta = pergunta.validar_resposta(indice_escolhido)
         super().__init__(pergunta, esta_correta, pontuacao_obtida)
+
+    def calcular_pontuacao(self):
+        if self.esta_correta:
+            return 1.0
+        else:
+            return 0.0
 
         
