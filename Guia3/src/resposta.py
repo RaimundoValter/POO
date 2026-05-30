@@ -1,10 +1,12 @@
 from typing import List, Tuple, Dict
+from abc import ABC, abstractmethod
 
-class Resposta:
-    def __init__(self, pergunta, esta_correta, pontuacao_obtida):
+class Resposta(ABC):
+    def __init__(self, pergunta):
         self.pergunta = pergunta
-        self.esta_correta = esta_correta
-        self.pontuacao_obtida = pontuacao_obtida
-    
-    def calcular_pontuacao():
+        self.esta_correta = False
+        self.pontuacao_obtida = 0.0
+
+    @abstractmethod
+    def calcular_pontuacao(self) -> float:
         pass
