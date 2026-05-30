@@ -24,4 +24,3 @@ def test_criar_attempt():
 
     assert isinstance(tentativa, TentativaQuestionario)
     assert tentativa.usuario == "valter"
-
