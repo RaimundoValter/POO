@@ -1,8 +1,22 @@
 class Record:
     def __init__(self, record_id: int, name: str, address: str):
-        self._id = record_id
-        self._name = name
-        self._address = address
+        try:
+            id = int(record_id)
+        except (ValueError, TypeError):
+            raise ValueError("ID deve ser um número inteiro válido.")
+
+        if id <= 0:
+            raise ValueError("ID inválido.")
+
+        if not name or name.strip() == "":
+            raise ValueError("Nome inválido.Dont can be void")
+
+        if not address or address.strip() == "":
+            raise ValueError("Endereço invalido. Dont can be void")
+
+        self._id = id
+        self._name = name.strip()
+        self._address = address.strip()
 
     @property
     def id(self):
