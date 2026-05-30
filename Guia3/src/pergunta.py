@@ -3,17 +3,16 @@ from abc import ABC, abstractmethod
 
 class Pergunta(ABC):
     def __init__(self, texto, explicacao_geral = None):
-        self._texto = texto
-        self._explicacao_geral = explicacao_geral
+        self.texto = texto
+        self.explicacao_geral = explicacao_geral
+
+    def get_explicacao(self):
+        return self.explicacao_geral
 
     @abstractmethod
-    def validar_resposta(resposta):
+    def validar_resposta(self, resposta):
         pass
-
-    @property
-    def get_explicacao(self):
-        return self._explicacao_geral
     
-    @property
+    @abstractmethod
     def get_tipo(self):
         return self.get_tipo

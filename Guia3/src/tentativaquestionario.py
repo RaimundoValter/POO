@@ -1,21 +1,37 @@
-from typing import List, Tuple, Dict
+from datetime import datetime
+from src.respostadiscursiva import RespostaDiscursiva
+from src.respostaobjetiva import RespostaObjetiva
 
 class TentativaQuestionario:
-    def __init__(self, questionario, usuario, data_inicio = None, data_fim = None):
-        self._questionario = questionario
-        self._usuario = usuario
-        self._data_inicio = data_inicio
-        self._data_fim = data_fim
-        self._respostas = []
+    def __init__(self, questionario, usuario):
+        self.questionario = questionario  
+        self.usuario = usuario            
+        self.respostas = []               
+        self.data_inicio = datetime.now()
+        self.data_fim = None
+        self.finalizado = False          
 
     def registrar_resposta(self, indice_pergunta, valor):
-        self._respostas.append(valor)
+        pergunta = self.questionario.perguntas[indice_pergunta]
+        if pergunta.get_tipo() == "multipla_escolha":
+            nova_resposta = RespostaObjetiva(pergunta, valor)
+        else:
+            nova_resposta = RespostaDiscursiva(pergunta, valor)
 
-    def finalizar(self):
-        pass
+        self.respostas.append(nova_resposta)
 
     def calcular_pontuacao(self):
-        pass
+        total = 0.0
+        for resp in self.respostas:
+            total += resp.calcular_pontuacao()
+        return total
+
+    def finalizar(self):
+        self.data_fim = datetime.now() 
+        self.finalizado = True
+        nota_final = self.calcular_pontuacao()
+        
+        return (nota_final, "Finalizado")
 
     def is_finalizado(self):
-        pass
+        return self.finalizado
