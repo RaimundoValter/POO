@@ -8,4 +8,4 @@ class Resposta(ABC):
         self.pontuacao_obtida = pontuacao_obtida
     
     def calcular_pontuacao(self):
-        pass #VER AMANHÃ!!!!
+        pass

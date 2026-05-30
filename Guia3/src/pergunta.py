@@ -2,7 +2,7 @@ from typing import List, Tuple, Dict
 from abc import ABC, abstractmethod
 
 class Pergunta(ABC):
-    def __init__(self, texto: str, explicacao_geral: str = None):
+    def __init__(self, texto: str, explicacao_geral = None):
         self._texto = texto
         self._explicacao_geral = explicacao_geral
     

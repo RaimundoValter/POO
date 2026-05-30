@@ -1,17 +1,13 @@
-﻿from typing import List, Tuple, Dict
+﻿from typing import List
+from src.tentativaquestionario import TentativaQuestionario
 
 class Questionario:
-    def __init__(self, resposta_esperada=None, case_sensitive: bool = False):
-        self.resposta_esperada = resposta_esperada
-        self.case_sensitive = case_sensitive
-        self.perguntas = []
+    def __init__(self, titulo: str):
+        self.titulo = titulo
+        self.perguntas: List = []
 
-    def adicionar_pergunta(self, pergunta):
+    def adicionar_pergunta(self, pergunta) -> None:
         self.perguntas.append(pergunta)
 
-    def validar_resposta(self, texto: str) -> bool:
-        if self.resposta_esperada is None:
-            return True
-        if self.case_sensitive:
-            return texto == self.resposta_esperada
-        return texto.lower() == self.resposta_esperada.lower()  
+    def criar_attempt(self, usuario: str):
+        return TentativaQuestionario(questionario = self, usuario = usuario)
